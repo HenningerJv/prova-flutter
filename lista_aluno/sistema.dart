@@ -22,7 +22,10 @@ class TelaInicial extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(radius: 50, child: Text("assets/estudos.png")),
+            CircleAvatar(
+              radius: 50,
+              backgroundImage: AssetImage("assets/estudos.png"),
+            ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
@@ -32,7 +35,7 @@ class TelaInicial extends StatelessWidget {
                 );
               },
               child: Text("ACESSAR"),
-            )
+            ),
           ],
         ),
       ),
@@ -49,27 +52,24 @@ class _TelaLoginState extends State<TelaLogin> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
   String _token = '';
-  String? _erro;  // Variável para armazenar mensagens de erro
+  String? _erro;
 
   Future<void> fazerLogin() async {
     String nome = _nomeController.text;
     String senha = _senhaController.text;
 
-    // Verificar se os campos estão preenchidos
     if (nome.isEmpty || senha.isEmpty) {
       setState(() {
         _erro = "Os campos nome e senha são obrigatórios.";
       });
-      return; // Se algum campo estiver vazio, não prosseguir
+      return;
     }
 
-    // Aqui você pode fazer a chamada à API com nome e senha se necessário
     setState(() {
-      _token = "TOKEN_SIMULADO_12345"; // Substitua pela chamada à API real
-      _erro = null; // Limpar mensagem de erro se o login for bem-sucedido
+      _token = "TOKEN_SIMULADO_12345";
+      _erro = null;
     });
 
-    // Redirecionar para a tela de alunos
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => TelaAlunos(token: _token)),
@@ -98,7 +98,7 @@ class _TelaLoginState extends State<TelaLogin> {
               onPressed: fazerLogin,
               child: Text("ENVIAR"),
             ),
-            if (_erro != null) // Exibir mensagem de erro, se houver
+            if (_erro != null)
               Padding(
                 padding: const EdgeInsets.only(top: 20.0),
                 child: Text(
@@ -106,7 +106,7 @@ class _TelaLoginState extends State<TelaLogin> {
                   style: TextStyle(color: Colors.red),
                 ),
               ),
-            if (_token.isNotEmpty) 
+            if (_token.isNotEmpty)
               Text("Token recebido: $_token"),
           ],
         ),
@@ -128,7 +128,6 @@ class _TelaAlunosState extends State<TelaAlunos> {
   String filtro = "todos";
 
   Future<void> buscarNotasAlunos() async {
-    // Simulação da chamada à API no mockable.io
     setState(() {
       alunos = [
         {"nome": "Carlos", "nota": 40},
