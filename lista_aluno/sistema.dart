@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(MyApp());
@@ -126,22 +128,46 @@ class TelaAlunos extends StatefulWidget {
 class _TelaAlunosState extends State<TelaAlunos> {
   List<Map<String, dynamic>> alunos = [];
   String filtro = "todos";
+  bool isLoading = true; // Indica se os dados estão carregando
+  String? errorMessage;  // Para exibir erro se a requisição falhar
 
   Future<void> buscarNotasAlunos() async {
-    setState(() {
-      alunos = [
-        {"nome": "Carlos", "nota": 40},
-        {"nome": "Davi", "nota": 20},
-        {"nome": "James", "nota": 60},
-        {"nome": "Isac", "nota": 100},
-      ];
-    });
+    final String url = 'https://demo4039038.mockable.io/notasAlunos'; // Endpoint do Mockable.io
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        // Se a resposta for OK (200), processa os dados
+        final List<dynamic> data = jsonDecode(response.body);
+
+        setState(() {
+          alunos = data.map((item) {
+            return {
+              "nome": item["nome"],
+              "nota": item["nota"]
+            };
+          }).toList();
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          errorMessage = 'Erro ao carregar os dados: ${response.statusCode}';
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Erro de conexão: $e';
+        isLoading = false;
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    buscarNotasAlunos();
+    buscarNotasAlunos(); // Chama a função ao inicializar a tela
   }
 
   @override
@@ -193,32 +219,36 @@ class _TelaAlunosState extends State<TelaAlunos> {
             ],
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: alunosFiltrados.length,
-              itemBuilder: (context, index) {
-                final aluno = alunosFiltrados[index];
-                Color cor;
-                if (aluno["nota"] == 100) {
-                  cor = Colors.green;
-                } else if (aluno["nota"] >= 60) {
-                  cor = Colors.blue;
-                } else {
-                  cor = Colors.yellow;
-                }
-                return Container(
-                  color: cor,
-                  padding: EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(aluno["nome"]),
-                      Text(aluno["nota"].toString()),
-                    ],
-                  ),
-                );
-              },
-            ),
-          )
+            child: isLoading
+                ? Center(child: CircularProgressIndicator()) // Mostra o indicador de carregamento
+                : errorMessage != null
+                    ? Center(child: Text(errorMessage!)) // Exibe erro se houver
+                    : ListView.builder(
+                        itemCount: alunosFiltrados.length,
+                        itemBuilder: (context, index) {
+                          final aluno = alunosFiltrados[index];
+                          Color cor;
+                          if (aluno["nota"] == 100) {
+                            cor = Colors.green;
+                          } else if (aluno["nota"] >= 60) {
+                            cor = Colors.blue;
+                          } else {
+                            cor = Colors.yellow;
+                          }
+                          return Container(
+                            color: cor,
+                            padding: EdgeInsets.all(16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(aluno["nome"]),
+                                Text(aluno["nota"].toString()),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+          ),
         ],
       ),
     );
