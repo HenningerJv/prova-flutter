@@ -133,7 +133,7 @@ class _TelaAlunosState extends State<TelaAlunos> {
 
   // Substitua essa função pela versão nova
   Future<void> buscarNotasAlunos() async {
-    final String url = 'http://demo8149697.mockable.io/notasAlunos'; // Substitua com a sua URL
+    final String url = 'https://demo8149697.mockable.io/notasAlunos'; // Substitua com a sua URL
 
     try {
       final response = await http.get(Uri.parse(url));
