@@ -131,14 +131,15 @@ class _TelaAlunosState extends State<TelaAlunos> {
   bool isLoading = true; // Indica se os dados estão carregando
   String? errorMessage;  // Para exibir erro se a requisição falhar
 
+  // Substitua essa função pela versão nova
   Future<void> buscarNotasAlunos() async {
-    final String url = 'https://demo4039038.mockable.io/notasAlunos'; // Endpoint do Mockable.io
+    final String url = 'http://demo8149697.mockable.io/notasAlunos'; // Substitua com a sua URL
 
     try {
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        // Se a resposta for OK (200), processa os dados
+        // Processa os dados
         final List<dynamic> data = jsonDecode(response.body);
 
         setState(() {
